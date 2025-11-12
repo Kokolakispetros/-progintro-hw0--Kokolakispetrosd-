@@ -1,95 +1,81 @@
-```c
-#include <stdlib.h>
-#include <stdio.h> 
-#include <math.h>
+#include <stdio.h>
 
-// Function to calculate s(x) 
-long long int aliquot(long long num) {
-    long long sum = 0;
-    
-    for(long long int i=1; i*i<=num; i++) {
-        if(num % i == 0)
-            sum = sum + i + num/i;            
+long long int LIMIT = 1000000000000000;
+
+long long int start, max_len;
+char mode;
+
+long long int div_sum(long long int n) {
+    if (n == 1) return 0;
+
+    long long int s = 1;
+    for (long long int i = 2; i * i <= n; i++) {
+        if (n % i == 0) {
+            long long int j = n / i;
+            if (i == j) {
+                s += i;
+            } else {
+                s += i + j;
+            }
+        }
     }
-    return sum;
+    return s;
 }
 
-// Driver code
 int main() {
-
-
-    long long num = 0;
-    // Get number from stdin
-    printf("Please give the number to start the aliquot sequence from:\n");
-    if(scanf("%lld", &num) != 1){
-        printf("Scanf failed!\n");
+    printf("Please give the number to start the aliquot sequence from: ");
+    if (scanf("%lld", &start) != 1 || start <= 0 || start >= LIMIT) {
+        printf("Only positive integer values below 1000000000000000 are accepted.\n");
         return 1;
     }
 
-    long long user_length = 0;
-    // Get length from stdin
-    printf("Provide the max aliquot length to look for (0 for unlimited):\n");
-    if(scanf("%lld", &user_length) != 1) {
-        printf("Scanf failed!\n");
-        return 1;
-    }
-    
-    char mode = 'W';
-    // Get mode from stdin
-    printf("Do you want to print the full sequence ('f') or just the length ('l')? ");
-    
-    if(scanf(" %c", &mode) != 1) {
-        printf("Scanf failed!\n");
+    printf("Provide the max aliquot length to look for (0 for unlimited): ");
+    if (scanf("%lld", &max_len) != 1 || max_len < 0 || max_len >= LIMIT) {
+        printf("Only positive integer values below 1000000000000000 are accepted.\n");
         return 1;
     }
 
-    // Check for invalid user input
-    if(mode != 'l' && mode != 'f') {
-        printf("Invalid character choice!\n");
+    printf("Press f for full sequence or l for length. ");
+    scanf(" %c", &mode);
+
+    if (mode != 'f' && mode != 'l') {
+        printf("The only acceptable options are f and l.\n");
         return 1;
     }
 
-    long long real_length = 0; 
+    long long int n = start;
+    long long int len = 0;
 
-   
-    
-
-
-    long long result = num; 
-
-    int unlimited = 0;
-
-    // Check for infinite sequence or not 
-    if(user_length == 0){
-        unlimited = 1;
-        user_length = 1;
+    if (mode == 'f') {
+        printf("%lld\n", start);
     }
 
-    int i = 0;    
-    // Call aliquot on itself user_length times
-    if(mode == 'f')
-        printf("%lld\n", result);
-    
-    while(i<user_length) {
-        result = aliquot(result);
-        //printf("Aliquot of %lld is %lld", temp, result);
-        if(mode == 'f')
-            printf("%lld\n", result);
-        else
-            real_length++;
-        // Check for terminal condition
-        if(result == 0)
+    while (1==1) {
+        if (max_len != 0 && len >= max_len) {
             break;
-        
-        // Check for infinite sequence or not
-        if(unlimited == 0)
-            i++;
+        }
+
+        if (n == 0 || n >= LIMIT) {
+            break;
+        }
+
+        n = div_sum(n);
+        len++;
+
+        if (n >= LIMIT) {
+            printf("Last acceptable number: %lld\n", n);
+            printf("Number exceeds maximum supported integer (1000000000000000). Stopping.\n");
+            return 1;
+        }
+
+        if (mode == 'f') {
+            printf("%lld\n", n);
+        }
     }
 
-    if(mode == 'l') 
-        printf("Length of aliquot sequence: %lld\n", real_length);
-       
+    if (mode == 'l') {
+        printf("Length of aliquot sequence: %lld\n", len);
+    }
 
     return 0;
 }
-```
